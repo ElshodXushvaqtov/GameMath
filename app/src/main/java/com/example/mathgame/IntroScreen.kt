@@ -32,7 +32,7 @@ fun IntroScreen(navController: NavHostController) {
     ) {
         Button(
             onClick = {
-                navController.navigate("operator_screen")
+                navController.navigate("details_screen")
             },
             Modifier
                 .width(300.dp)

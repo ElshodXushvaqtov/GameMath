@@ -1,18 +1,24 @@
 package com.example.mathgame
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,11 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mathgame.navigation.NavGraph
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @Composable
 fun NewGameScreen(navController: NavHostController) {
-
     var num1 by remember { mutableIntStateOf(0) }
     var num2 by remember { mutableIntStateOf(0) }
     var operator = "+"
@@ -49,10 +57,64 @@ fun NewGameScreen(navController: NavHostController) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .wrapContentSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        var timerValue by remember { mutableIntStateOf(10) }
+        var isTimerRunning by remember { mutableStateOf(false) }
+
+        val coroutineScope = rememberCoroutineScope()
+
+        Column(
+
+
+        ) {
+            // Timer value
+            Text(
+                text = "Timer: $timerValue seconds",
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            // Start button
+            Button(
+                onClick = {
+                    if (!isTimerRunning) {
+                        isTimerRunning = true
+                        coroutineScope.launch {
+                            while (timerValue > 0) {
+                                delay(1000)
+                                timerValue--
+                            }
+                            isTimerRunning = false
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(bottom = 16.dp)
+            ) {
+                Text("Start Timer")
+            }
+
+            // Reset button
+            Button(
+                onClick = {
+                    isTimerRunning = false
+                    timerValue = 10
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .padding(bottom = 16.dp)
+            ) {
+                Text("Reset Timer")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(40.dp))
 
         Text("$num1 $operator $num2 = ?")
 
@@ -70,6 +132,7 @@ fun NewGameScreen(navController: NavHostController) {
         }
     }
 }
+
 
 @Composable
 fun AnswerButton(text: String, onClick: () -> Unit) {
@@ -112,4 +175,7 @@ fun test() {
 
 
 }
+
+
+
 
