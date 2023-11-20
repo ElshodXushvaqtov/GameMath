@@ -62,13 +62,6 @@ class TimerViewModel : ViewModel() {
         _timerValue.value = 10
         isGameOver = false
     }
-
-    fun ifTimerEnds(onTimerEnds: () -> Unit) {
-        if (isGameOver) {
-            onTimerEnds()
-            isGameOver = false // Reset the game over state after handling it
-        }
-    }
 }
 
 
@@ -100,9 +93,9 @@ fun NewGameScreen(navController: NavHostController, timerViewModel: TimerViewMod
     val timerValue by viewModel.timerValue.collectAsState()
 
 
-    LaunchedEffect(timerValue) {
-        println("Timer value: $timerValue")
-    }
+//    LaunchedEffect(timerValue) {
+//        println("Timer value: $timerValue")
+//    }
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -204,7 +197,6 @@ fun incorrectAnswers(correctAnswer: Int): List<Int> {
     }
     return incorrectAnswers
 }
-
 
 @Preview
 @Composable
