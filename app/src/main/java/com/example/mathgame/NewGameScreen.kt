@@ -101,7 +101,7 @@ fun NewGameScreen(navController: NavHostController, timerViewModel: TimerViewMod
 
 
     LaunchedEffect(timerValue) {
-        println("Timer value in UI: $timerValue")
+        println("Timer value: $timerValue")
     }
     Column(
         modifier = Modifier
