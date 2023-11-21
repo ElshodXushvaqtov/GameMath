@@ -2,18 +2,25 @@ package com.example.mathgame.navigation
 
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.mathgame.DetailsScreen
 import com.example.mathgame.IntroScreen
 import com.example.mathgame.NewGameScreen
 import com.example.mathgame.OperatorScreen
 import com.example.mathgame.RecordsScreen
 import com.example.mathgame.SplashScreen
+import com.example.mathgame.module.SharedView
 
 @Composable
 fun NavGraph(navController: NavHostController) {
+
+    val sharedView: SharedView = viewModel()
+
     NavHost(
         navController = navController,
         startDestination = Screens.SplashScreen.route
@@ -23,7 +30,7 @@ fun NavGraph(navController: NavHostController) {
             SplashScreen(navController)
         }
         composable(route = Screens.IntroScreen.route) {
-         IntroScreen(navController)
+            IntroScreen(navController)
         }
         composable(route = Screens.OperatorsScreen.route) {
             OperatorScreen(navController)
@@ -36,6 +43,7 @@ fun NavGraph(navController: NavHostController) {
         }
         composable(route = Screens.NewGameScreen.route) {
             NewGameScreen(navController)
+
         }
     }
 }

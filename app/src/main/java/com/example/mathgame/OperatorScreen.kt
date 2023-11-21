@@ -45,7 +45,7 @@ fun OperatorScreen(navController: NavHostController) {
         }
         Row {
             Button(
-                onClick = {},
+                onClick = {navController.navigate("new_game_screen")},
                 Modifier
                     .width(70.dp)
                     .height(70.dp),
@@ -57,7 +57,7 @@ fun OperatorScreen(navController: NavHostController) {
             }
             Spacer(Modifier.width(20.dp))
             Button(
-                onClick = {},
+                onClick = {navController.navigate("new_game_screen")},
                 Modifier
                     .width(70.dp)
                     .height(70.dp),
@@ -69,7 +69,7 @@ fun OperatorScreen(navController: NavHostController) {
             }
         }
         Button(
-            onClick = {},
+            onClick = {navController.navigate("new_game_screen")},
             Modifier
                 .width(70.dp)
                 .height(70.dp),

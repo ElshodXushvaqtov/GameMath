@@ -9,12 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,54 +21,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.mathgame.brain.Logic
 import com.example.mathgame.navigation.NavGraph
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 
-class TimerViewModel : ViewModel() {
-    private val _timerValue = MutableStateFlow(10)
-    val timerValue: StateFlow<Int> = _timerValue.asStateFlow()
-
-    private var timerJob: Job? = null
-    var isGameOver by mutableStateOf(false)
-
-    fun startTimer() {
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            while (_timerValue.value > 0) {
-                delay(1000)
-                _timerValue.value--
-            }
-            isGameOver = true
-        }
-    }
-
-    fun resetTimer() {
-        timerJob?.cancel()
-        _timerValue.value = 10
-        isGameOver = false
-    }
-}
-
-
 @Composable
-fun NewGameScreen(navController: NavHostController, timerViewModel: TimerViewModel = viewModel()) {
+fun NewGameScreen(navController: NavHostController) {
+
     var num1 by remember { mutableIntStateOf(0) }
     var num2 by remember { mutableIntStateOf(0) }
     var operator = "+"
     var userAnswer by remember { mutableStateOf("") }
-
+    var logic = Logic()
     var changeQuestion by remember { mutableStateOf(false) }
 
     if (changeQuestion) {
@@ -83,29 +48,31 @@ fun NewGameScreen(navController: NavHostController, timerViewModel: TimerViewMod
     }
 
     val correctAnswer = num1 + num2
-    val incorrectAnswers = incorrectAnswers(correctAnswer)
+    val incorrectAnswers = logic.incorrectAnswers(correctAnswer)
     val answerOptions =
         (listOf(correctAnswer) + incorrectAnswers).shuffled() //shuffled() - elementlarni random joylashtirib beradi
 
 
-    var isTimerRunning by remember { mutableStateOf(false) }
-    val viewModel: TimerViewModel = remember { timerViewModel }
-    val timerValue by viewModel.timerValue.collectAsState()
+
+    var timerValue by remember { mutableIntStateOf(10) }
+    LaunchedEffect(timerValue) {
+        // Timer
+        while (timerValue > 0) {
+            delay(1000)
+            timerValue--
+        }
+
+    }
 
 
-//    LaunchedEffect(timerValue) {
-//        println("Timer value: $timerValue")
-//    }
-    Column(
+        Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
-        if (viewModel.isGameOver) {
-            Text(text = "Game Over")
-        } else {
+
             Column(
                 modifier = Modifier
                     .wrapContentSize(),
@@ -116,34 +83,8 @@ fun NewGameScreen(navController: NavHostController, timerViewModel: TimerViewMod
                     text = "Timer: $timerValue seconds",
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
-
-                Button(
-                    onClick = {
-                        if (!isTimerRunning) {
-                            isTimerRunning = true
-                            viewModel.startTimer()
-                        }
-                    },
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .height(50.dp)
-                        .padding(bottom = 16.dp)
-                ) {
-                    Text("Start Timer")
-                }
-
-                Button(
-                    onClick = {
-                        isTimerRunning = false
-                        viewModel.resetTimer()
-                    },
-                    modifier = Modifier
-                        .wrapContentWidth()
-                        .height(50.dp)
-                ) {
-                    Text("Reset Timer")
-                }
             }
+
 
 
 
@@ -157,7 +98,7 @@ fun NewGameScreen(navController: NavHostController, timerViewModel: TimerViewMod
                 AnswerButton(
                     text = answer.toString()
                 ) {
-                    checkAnswer(answer, correctAnswer) { result ->
+                    logic.checkAnswer(answer, correctAnswer) { result ->
                         changeQuestion = result
                     }
                 }
@@ -166,7 +107,7 @@ fun NewGameScreen(navController: NavHostController, timerViewModel: TimerViewMod
             }
         }
     }
-}
+
 
 @Composable
 fun AnswerButton(text: String, onClick: () -> Unit) {
@@ -180,23 +121,6 @@ fun AnswerButton(text: String, onClick: () -> Unit) {
     }
 }
 
-fun checkAnswer(selectedAnswer: Int, correctAnswer: Int, onResult: (Boolean) -> Unit) {
-    val isCorrect = selectedAnswer == correctAnswer
-
-    onResult(isCorrect)
-}
-
-fun incorrectAnswers(correctAnswer: Int): List<Int> {
-    val incorrectAnswers = mutableListOf<Int>()
-    repeat(3) {
-        var incorrectAnswer = Random.nextInt(1, 20)
-        while (incorrectAnswer == correctAnswer) {    //random xato javob to'g'ri javobga teng bob qolmasligi uchun
-            incorrectAnswer = Random.nextInt(1, 20)
-        }
-        incorrectAnswers.add(incorrectAnswer)
-    }
-    return incorrectAnswers
-}
 
 @Preview
 @Composable

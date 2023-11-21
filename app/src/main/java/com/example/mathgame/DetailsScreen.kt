@@ -43,7 +43,6 @@ fun DetailsScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // TextField for user input
         TextField(
             value = userName,
             onValueChange = {
@@ -63,7 +62,6 @@ fun DetailsScreen(navController: NavHostController) {
             )
         )
 
-        // Button to proceed
         Button(
             onClick = {
                navController.navigate("operators_screen")
