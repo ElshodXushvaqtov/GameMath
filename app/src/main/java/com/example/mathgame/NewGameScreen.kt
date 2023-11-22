@@ -61,9 +61,6 @@ fun NewGameScreen(navController: NavHostController) {
             delay(1000)
             timerValue--
         }
-
-        isGameOver = true
-
     }
 
 
@@ -74,7 +71,7 @@ fun NewGameScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     )
     {
-        if (isGameOver) {
+        if (timerValue==0) {
 
             Text(text = "Game Over")
 
