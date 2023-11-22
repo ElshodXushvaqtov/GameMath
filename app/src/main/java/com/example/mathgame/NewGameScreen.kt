@@ -74,39 +74,47 @@ fun NewGameScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     )
     {
+        if (isGameOver) {
 
-        Column(
-            modifier = Modifier
-                .wrapContentSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Timer: $timerValue seconds",
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
+            Text(text = "Game Over")
 
+            navController.navigate("operators_screen")
 
+        } else {
 
-
-        Spacer(modifier = Modifier.height(40.dp))
-        Text(text = "Score: ${score.intValue}")
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("$num1 $operator $num2 = ?")
-        for (answer in answerOptions) {
-            AnswerButton(
-                text = answer.toString()
+            Column(
+                modifier = Modifier
+                    .wrapContentSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Logic.checkAnswer(answer, correctAnswer) { result ->
-                    changeQuestion = result
-                    if (result) {
-                        score.intValue++
+                Text(
+                    text = "Timer: $timerValue seconds",
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+            }
+
+
+
+
+            Spacer(modifier = Modifier.height(40.dp))
+            Text(text = "Score: ${score.intValue}")
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("$num1 $operator $num2 = ?")
+            for (answer in answerOptions) {
+                AnswerButton(
+                    text = answer.toString()
+                ) {
+                    Logic.checkAnswer(answer, correctAnswer) { result ->
+                        changeQuestion = result
+                        if (result) {
+                            score.intValue++
+                        }
                     }
                 }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
+            }
         }
     }
 }
