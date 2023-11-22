@@ -31,14 +31,15 @@ import kotlin.random.Random
 
 @Composable
 fun NewGameScreen(navController: NavHostController) {
-
+    var isGameOver = false
     var num1 by remember { mutableIntStateOf(0) }
     var num2 by remember { mutableIntStateOf(0) }
     var operator = "+"
     var userAnswer by remember { mutableStateOf("") }
-    var logic = Logic()
+    val test = remember {
+        mutableStateOf(Logic.generate())
+    }
     var changeQuestion by remember { mutableStateOf(false) }
-
     if (changeQuestion) {
         num1 = Random.nextInt(1, 10)
         num2 = Random.nextInt(1, 10)
@@ -47,25 +48,26 @@ fun NewGameScreen(navController: NavHostController) {
         changeQuestion = false
     }
 
+    var score = remember { mutableIntStateOf(0) }
     val correctAnswer = num1 + num2
-    val incorrectAnswers = logic.incorrectAnswers(correctAnswer)
+    val incorrectAnswers = Logic.incorrectAnswers(correctAnswer)
     val answerOptions =
         (listOf(correctAnswer) + incorrectAnswers).shuffled() //shuffled() - elementlarni random joylashtirib beradi
 
-
-
     var timerValue by remember { mutableIntStateOf(10) }
     LaunchedEffect(timerValue) {
-        // Timer
+
         while (timerValue > 0) {
             delay(1000)
             timerValue--
         }
 
+        isGameOver = true
+
     }
 
 
-        Column(
+    Column(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,40 +75,41 @@ fun NewGameScreen(navController: NavHostController) {
     )
     {
 
-            Column(
-                modifier = Modifier
-                    .wrapContentSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+        Column(
+            modifier = Modifier
+                .wrapContentSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Timer: $timerValue seconds",
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+
+
+
+
+        Spacer(modifier = Modifier.height(40.dp))
+        Text(text = "Score: ${score.intValue}")
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("$num1 $operator $num2 = ?")
+        for (answer in answerOptions) {
+            AnswerButton(
+                text = answer.toString()
             ) {
-                Text(
-                    text = "Timer: $timerValue seconds",
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-            }
-
-
-
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Text("$num1 $operator $num2 = ?")
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            for (answer in answerOptions) {
-                AnswerButton(
-                    text = answer.toString()
-                ) {
-                    logic.checkAnswer(answer, correctAnswer) { result ->
-                        changeQuestion = result
+                Logic.checkAnswer(answer, correctAnswer) { result ->
+                    changeQuestion = result
+                    if (result) {
+                        score.intValue++
                     }
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-
             }
+            Spacer(modifier = Modifier.height(8.dp))
+
         }
     }
+}
 
 
 @Composable
