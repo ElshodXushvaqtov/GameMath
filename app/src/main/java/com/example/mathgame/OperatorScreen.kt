@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mathgame.navigation.NavGraph
+import com.example.mathgame.navigation.Screens
+import kotlin.math.sign
 
 @Composable
 fun OperatorScreen(navController: NavHostController) {
@@ -32,7 +34,11 @@ fun OperatorScreen(navController: NavHostController) {
 
         Button(
             onClick = {
-                navController.navigate("new_game_screen")
+                navController.navigate(
+                    route = Screens.NewGameScreen.getFullRoute(
+                        operator = "+"
+                    )
+                )
             },
             Modifier
                 .width(70.dp)
@@ -45,7 +51,13 @@ fun OperatorScreen(navController: NavHostController) {
         }
         Row {
             Button(
-                onClick = {navController.navigate("new_game_screen")},
+                onClick = {
+                    navController.navigate(
+                        route = Screens.NewGameScreen.getFullRoute(
+                            operator = "-"
+                        )
+                    )
+                },
                 Modifier
                     .width(70.dp)
                     .height(70.dp),
@@ -57,7 +69,13 @@ fun OperatorScreen(navController: NavHostController) {
             }
             Spacer(Modifier.width(20.dp))
             Button(
-                onClick = {navController.navigate("new_game_screen")},
+                onClick = {
+                    navController.navigate(
+                        route = Screens.NewGameScreen.getFullRoute(
+                            operator = "*"
+                        )
+                    )
+                },
                 Modifier
                     .width(70.dp)
                     .height(70.dp),
@@ -69,7 +87,13 @@ fun OperatorScreen(navController: NavHostController) {
             }
         }
         Button(
-            onClick = {navController.navigate("new_game_screen")},
+            onClick = {
+                navController.navigate(
+                    route = Screens.NewGameScreen.getFullRoute(
+                        operator = "÷"
+                    )
+                )
+            },
             Modifier
                 .width(70.dp)
                 .height(70.dp),

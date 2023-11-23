@@ -41,8 +41,16 @@ fun NavGraph(navController: NavHostController) {
         composable(route = Screens.DetailsScreen.route) {
             DetailsScreen(navController)
         }
-        composable(route = Screens.NewGameScreen.route) {
-            NewGameScreen(navController)
+        composable(route = Screens.NewGameScreen.route,
+            arguments = listOf(
+                navArgument(name = OPERATOR_KEY) {
+                    type = NavType.StringType
+                }
+            )) { navBackStackEntry ->
+            val sign = navBackStackEntry.arguments?.getString(OPERATOR_KEY)
+            if (sign != null) {
+                NewGameScreen(navController = navController, sign = sign)
+            }
 
         }
     }

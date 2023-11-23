@@ -22,19 +22,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.mathgame.brain.Logic
-import com.example.mathgame.navigation.NavGraph
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 
 @Composable
-fun NewGameScreen(navController: NavHostController) {
+fun NewGameScreen(navController: NavHostController, sign: String?) {
     var isGameOver = false
-    var num1 by remember { mutableIntStateOf(0) }
-    var num2 by remember { mutableIntStateOf(0) }
-    var operator = "+"
+    var num1 by remember { mutableIntStateOf(1) }
+    var num2 by remember { mutableIntStateOf(1) }
+    var operator = sign
     var userAnswer by remember { mutableStateOf("") }
     val test = remember {
         mutableStateOf(Logic.generate())
@@ -43,13 +41,20 @@ fun NewGameScreen(navController: NavHostController) {
     if (changeQuestion) {
         num1 = Random.nextInt(1, 10)
         num2 = Random.nextInt(1, 10)
-        operator = "+"
+        operator = sign
         userAnswer = ""
         changeQuestion = false
     }
 
     var score = remember { mutableIntStateOf(0) }
-    val correctAnswer = num1 + num2
+    val correctAnswer = when (operator) {
+
+        "+" -> num1 + num2
+        "-" -> num1 - num2
+        "*" -> num1 * num2
+        "÷" -> num1 / num2
+        else -> return
+    }
     val incorrectAnswers = Logic.incorrectAnswers(correctAnswer)
     val answerOptions =
         (listOf(correctAnswer) + incorrectAnswers).shuffled() //shuffled() - elementlarni random joylashtirib beradi
@@ -71,7 +76,7 @@ fun NewGameScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center
     )
     {
-        if (timerValue==0) {
+        if (timerValue == 0) {
 
             Text(text = "Game Over")
 
@@ -134,9 +139,9 @@ fun AnswerButton(text: String, onClick: () -> Unit) {
 @Composable
 fun test() {
 
-    val navController = rememberNavController()
-    NavGraph(navController = navController)
-    NewGameScreen(navController = navController)
+//    val navController = rememberNavController()
+//    NavGraph(navController = navController)
+//    NewGameScreen(navController = navController)
 
 
 }
